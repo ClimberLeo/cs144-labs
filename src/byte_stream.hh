@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <queue>
 #include <string>
 #include <string_view>
 
@@ -11,39 +12,44 @@ class ByteStream {
 public:
     explicit ByteStream(uint64_t capacity);
 
-    // Helper functions (provided) to access the ByteStream's Reader and Writer interfaces
+    // 用于访问ByteStream的Reader和Writer接口的辅助函数
     Reader& reader();
     const Reader& reader() const;
     Writer& writer();
     const Writer& writer() const;
 
-    void set_error() { error_ = true; };        // Signal that the stream suffered an error.
-    bool has_error() const { return error_; };  // Has the stream had an error?
+    void set_error() { error_ = true; };        // 设置流错误标志
+    bool has_error() const { return error_; };  // 检查流错误标志
 
 protected:
-    // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
-    uint64_t capacity_;
+    // 成员变量统一实现在此基类中，以供Reader和Writer接口使用
+    size_t capacity_;
     bool error_{};
+    bool closed_{};
+    std::queue<std::string> buffer_{};  // 缓冲区，用于存储字节流数据
+    std::string_view buf_view_{};       // 缓冲区首元素视图，用于提高字节流性能
+    size_t total_pushed_{};             // 已写入字节数
+    size_t total_popped_{};             // 已读出字节数
 };
 
 class Writer : public ByteStream {
 public:
-    void push(std::string data);  // Push data to stream, but only as much as available capacity allows.
-    void close();                 // Signal that the stream has reached its ending. Nothing more will be written.
+    void push(std::string data);  // 将数据推入流中，但只写入可用容量允许的字节数
+    void close();                 // 标识流已结束，不再写入数据
 
-    bool is_closed() const;               // Has the stream been closed?
-    uint64_t available_capacity() const;  // How many bytes can be pushed to the stream right now?
-    uint64_t bytes_pushed() const;        // Total number of bytes cumulatively pushed to the stream
+    bool is_closed() const;               // 检查流是否已结束
+    uint64_t available_capacity() const;  // 获取当前可用容量（剩余可写入字节数）
+    uint64_t bytes_pushed() const;        // 对当前流写入的总字节数
 };
 
 class Reader : public ByteStream {
 public:
-    std::string_view peek() const;  // Peek at the next bytes in the buffer
-    void pop(uint64_t len);         // Remove `len` bytes from the buffer
+    std::string_view peek() const;  // 获取下一个字节
+    void pop(uint64_t len);         // 从流中移除`len`字节（FIFO）
 
-    bool is_finished() const;         // Is the stream finished (closed and fully popped)?
-    uint64_t bytes_buffered() const;  // Number of bytes currently buffered (pushed and not popped)
-    uint64_t bytes_popped() const;    // Total number of bytes cumulatively popped from stream
+    bool is_finished() const;         // 检查流是否已完成（已标记关闭且所有数据已全部读出）
+    uint64_t bytes_buffered() const;  // 当前缓冲区中未读出的字节数
+    uint64_t bytes_popped() const;    // 当前流中累计读出的字节数
 };
 
 /*
