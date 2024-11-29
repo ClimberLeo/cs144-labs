@@ -33,7 +33,7 @@ public:
     const Writer& writer() const { return output_.writer(); }
 
 private:
-    // 遍历缓冲区检查是否有可以成功拼接的字节切片
+    // 遍历缓冲区尝试拼接缓存的字节切片，写入到字节流
     inline void try_assemble();
     // 检查当前字节切片是否合法（是否重叠/超出字节流最大容量，若有则原地修剪为正确格式）
     // 返回值表示是否未截断字节切片的后缀（至少保留了最后一个字节），用于确定末尾切片标识
