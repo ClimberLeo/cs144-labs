@@ -11,7 +11,7 @@ void Writer::push(string data) {
         return;
     }
     size_t push_len = min(data.size(), available_capacity());
-    if (push_len == 0) {  // 缓冲区已无法容纳新数据
+    if (push_len == 0) {  // 缓冲区已无法容纳新数据或传入数据为空
         return;
     }
     if (push_len < data.size()) {
