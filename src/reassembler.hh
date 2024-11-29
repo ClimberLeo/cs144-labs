@@ -1,7 +1,8 @@
 #pragma once
 
-#include "byte_stream.hh"
 #include <map>
+
+#include "byte_stream.hh"
 
 class Reassembler {
 public:
@@ -38,10 +39,11 @@ private:
     // 返回值表示是否未截断字节切片的后缀（至少保留了最后一个字节），用于判断当前切片还是不是最后一个切片
     inline bool trim_slice(std::string& data, uint64_t& idx) const;
     // 添加待拼接的字节切片到缓冲区中
-    inline void add_pending_slice(std::string &data, uint64_t idx, bool is_last_substring);
+    inline void add_pending_slice(std::string& data, uint64_t idx, bool is_last_substring);
 
     ByteStream output_;  // 待写入的目标流
-    std::map<uint64_t, std::pair<std::string, bool>> buffer_{};  // 缓存待组装的字节（按索引排序以便于处理），pair的第二维表示是否为最后一个字节切片
-    uint64_t cur_idx_{};         // 当前处理到（未写入）的最小字节流索引
-    uint64_t pending_bytes_{};   // 存储在Reassembler的buffer中（未写入）的字节数
+    std::map<uint64_t, std::pair<std::string, bool>>
+        buffer_{};  // 缓存待组装的字节（按索引排序以便于处理），pair的第二维表示是否为最后一个字节切片
+    uint64_t cur_idx_{};        // 当前处理到（未写入）的最小字节流索引
+    uint64_t pending_bytes_{};  // 存储在Reassembler的buffer中（未写入）的字节数
 };

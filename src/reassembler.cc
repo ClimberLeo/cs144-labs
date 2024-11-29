@@ -1,4 +1,5 @@
 #include "reassembler.hh"
+
 #include <iostream>
 
 using namespace std;
@@ -10,7 +11,7 @@ void Reassembler::insert(uint64_t first_index, string data, bool is_last_substri
     if (cur_idx_ == first_index) {
         output_.writer().push(data);
         cur_idx_ += data.size();
-        try_assemble();  // 每次推入数据后尝试拼接缓冲区内的字节切片
+        try_assemble();           // 每次推入数据后尝试拼接缓冲区内的字节切片
         if (is_last_substring) {  // 全部写入完成，关闭流
             output_.writer().close();
         }
@@ -19,15 +20,13 @@ void Reassembler::insert(uint64_t first_index, string data, bool is_last_substri
     }
 }
 
-uint64_t Reassembler::bytes_pending() const {
-    return pending_bytes_;
-}
+uint64_t Reassembler::bytes_pending() const { return pending_bytes_; }
 
 inline void Reassembler::add_pending_slice(std::string& data, uint64_t idx, bool is_last_substring) {
     // 当前切片可能会覆盖一部分的缓冲区数据，因此先删除被覆盖的重叠部分
     auto l = idx, r = idx + data.size();  // 切片覆盖的范围（左闭右开）
-    auto it = buffer_.lower_bound(l);  // 找到第一个索引小于l的元素
-    if (it != buffer_.begin()) {  // 检查左侧是否有重叠部分
+    auto it = buffer_.lower_bound(l);     // 找到第一个索引小于l的元素
+    if (it != buffer_.begin()) {          // 检查左侧是否有重叠部分
         auto prev_it = it;
         prev_it--;
         auto& [prev_idx, prev_data] = *prev_it;
@@ -63,7 +62,8 @@ inline void Reassembler::add_pending_slice(std::string& data, uint64_t idx, bool
 }
 
 inline void Reassembler::try_assemble() {
-    for (auto it = buffer_.begin(); it != buffer_.end(); it = buffer_.erase(it)) {  // 遍历缓冲区，写入可被写入的切片到流
+    for (auto it = buffer_.begin(); it != buffer_.end();
+         it = buffer_.erase(it)) {  // 遍历缓冲区，写入可被写入的切片到流
         uint64_t idx = it->first;
         auto& [data, is_last_substring] = it->second;
         // 缓冲区按索引排序，那么当前切片无法拼接则后面的切片必然也无法拼接，因此直接退出
@@ -71,7 +71,7 @@ inline void Reassembler::try_assemble() {
             break;
         }
         // 缓冲区存在可直接推入流的切片（注意可能是空）
-        auto osz = data.size();  // 未裁剪前的切片大小  
+        auto osz = data.size();                      // 未裁剪前的切片大小
         is_last_substring &= trim_slice(data, idx);  // 修剪切片
         output_.writer().push(data);
         pending_bytes_ -= osz;  // 由于slice可能被裁剪，此处应减去裁剪前的大小
