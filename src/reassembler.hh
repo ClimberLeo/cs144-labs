@@ -32,6 +32,9 @@ public:
     // 输出流的读写器，但只能用于读取（不能写入）
     const Writer& writer() const { return output_.writer(); }
 
+    // 返回当前未组装的第一个索引
+    inline uint64_t cur_idx() const { return cur_idx_; }
+
 private:
     // 遍历缓冲区尝试拼接缓存的字节切片，写入到字节流
     inline void try_assemble();

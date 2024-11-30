@@ -23,6 +23,9 @@ Checkpoint 1 Writeup
     + 后面的元素开始，删除掉所有被当前切片完全覆盖掉的元素，检查到最后一个元素（被部分覆盖）时，判断其前半部分是否与当前元素重叠，若是，裁剪掉当前元素与其重叠的部分，此时若当前元素是末尾元素，取消其末尾切片标识
     + 将其加入到缓冲区中，增加pending字节数
 
+## 测试结果：
+最高吞吐量达到12.17Gbit/s，平均吞吐量10.31Gbit/s
+
 Describe Reassembler structure and design. [Describe data structures and
 approach taken. Describe alternative designs considered or tested.
 Describe benefits and weaknesses of your design compared with
