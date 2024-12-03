@@ -30,7 +30,7 @@ TCPReceiverMessage TCPReceiver::send() const {
                     Wrap32::wrap(reassembler_.cur_idx() + 1 + reassembler_.writer().is_closed(), isn_.value()))
                                  : nullopt;
     msg.window_size = min(writer().available_capacity(), 65535ul);  // 窗口最大大小为65535
-    msg.RST = writer().has_error();  // 若发生错误，则设置RST位
+    msg.RST = writer().has_error();                                 // 若发生错误，则设置RST位
 
     return msg;
 }

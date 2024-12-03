@@ -59,4 +59,20 @@ void Reader::pop(uint64_t len) {
     }
 }
 
+std::string Reader::get_bytes(uint64_t len) {
+    std::string bytes;
+    bytes.reserve(len);
+    // 从流中取出len个字节，直到流中字节数不足或取完为止
+    while (bytes_buffered() > 0 && bytes.size() < len) {
+        auto peeker = peek();
+        if (peeker.size() + bytes.size() > len) {
+            peeker.remove_suffix(peeker.size() + bytes.size() - len);
+        }
+        bytes.append(peeker);
+        pop(peeker.size());
+    }
+
+    return bytes;
+}
+
 uint64_t Reader::bytes_buffered() const { return total_pushed_ - total_popped_; }

@@ -44,8 +44,9 @@ public:
 
 class Reader : public ByteStream {
 public:
-    std::string_view peek() const;  // 获取下一个字节
-    void pop(uint64_t len);         // 从流中移除`len`字节（FIFO）
+    std::string_view peek() const;        // 获取下一个字节
+    void pop(uint64_t len);               // 从流中移除len字节（FIFO）
+    std::string get_bytes(uint64_t len);  // 从流中获取len字节
 
     bool is_finished() const;         // 检查流是否已完成（已标记关闭且所有数据已全部读出）
     uint64_t bytes_buffered() const;  // 当前缓冲区中未读出的字节数
