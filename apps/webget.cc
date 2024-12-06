@@ -4,11 +4,12 @@
 #include <string>
 
 #include "socket.hh"
+#include "tcp_minnow_socket.hh"
 
 using namespace std;
 
 void get_URL(const string& host, const string& path) {
-    TCPSocket sock;
+    CS144TCPSocket sock;  // 这个类底层使用的是本次lab中自己实现的TCP协议
     sock.connect(Address(host, "http"));
     // 发送HTTP请求
     sock.write("GET " + path + " HTTP/1.1\r\n"
@@ -22,7 +23,7 @@ void get_URL(const string& host, const string& path) {
         sock.read(buf);
         cout << buf;
     }
-    sock.close();
+    sock.wait_until_closed();
 }
 
 int main(int argc, char* argv[]) {

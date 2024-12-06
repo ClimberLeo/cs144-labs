@@ -74,16 +74,15 @@ FileDescriptor FileDescriptor::duplicate() const { return FileDescriptor{interna
 // buffer is the string to be read into
 void FileDescriptor::read(string& buffer) {
     if (buffer.empty()) {
-        buffer.clear();
         buffer.resize(kReadBufferSize);
     }
 
     const ssize_t bytes_read = ::read(fd_num(), buffer.data(), buffer.size());
     if (bytes_read < 0) {
         if (internal_fd_->non_blocking_ and (errno == EAGAIN or errno == EINPROGRESS)) {
+            buffer.clear();
             return;
         }
-        throw unix_error{"read"};
     }
 
     register_read();
