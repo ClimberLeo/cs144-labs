@@ -10,14 +10,14 @@
 #include <string>
 #include <utility>
 
-//! Wrapper around [IPv4 addresses](@ref man7::ip) and DNS operations.
+// IPv4地址和DNS操作的包装类 (引自man7::ip)
 class Address {
 public:
-    //! \brief Wrapper around [sockaddr_storage](@ref man7::socket).
-    //! \details A `sockaddr_storage` is enough space to store any socket address (IPv4 or IPv6).
+    // [sockaddr_storage](@ref man7::socket) 的封装类
+    // 注：`sockaddr_storage` 足够存储任何类型的套接字地址（IPv4 或 IPv6）
     class Raw {
     public:
-        sockaddr_storage storage{};  //!< The wrapped struct itself.
+        sockaddr_storage storage{};  // 封装的结构体本身
         // NOLINTBEGIN (*-explicit-*)
         operator sockaddr*();
         operator const sockaddr*() const;
@@ -25,53 +25,50 @@ public:
     };
 
 private:
-    socklen_t _size;  //!< Size of the wrapped address.
-    Raw _address{};   //!< A wrapped [sockaddr_storage](@ref man7::socket) containing the address.
+    socklen_t _size;  // 封装地址的大小
+    Raw _address{};   // 包含地址的封装 [sockaddr_storage](@ref man7::socket)
 
-    //! Constructor from ip/host, service/port, and hints to the resolver.
+    // 从 ip/host、service/port 以及解析器的提示构造地址
     Address(const std::string& node, const std::string& service, const addrinfo& hints);
 
 public:
-    //! Construct by resolving a hostname and servicename.
+    // 通过解析主机名和服务名构造地址
     Address(const std::string& hostname, const std::string& service);
 
-    //! Construct from dotted-quad string ("18.243.0.1") and numeric port.
+    // 从点分十进制的 IP 地址字符串（如"18.243.0.1"）和数字端口构造地址
     explicit Address(const std::string& ip, std::uint16_t port = 0);
 
-    //! Construct from a [sockaddr *](@ref man7::socket).
+    // 从 [sockaddr *](@ref man7::socket) 构造地址
     Address(const sockaddr* addr, std::size_t size);
 
-    //! Equality comparison.
+    // 相等性比较
     bool operator==(const Address& other) const;
     bool operator!=(const Address& other) const { return not operator==(other); }
 
-    //! \name Conversions
-    //!@{
+    /* name 转换 */
 
-    //! Dotted-quad IP address string ("18.243.0.1") and numeric port.
+    // 点分十进制的 IP 地址字符串（"18.243.0.1"）和数字端口
     std::pair<std::string, uint16_t> ip_port() const;
-    //! Dotted-quad IP address string ("18.243.0.1").
+    // 点分十进制的 IP 地址字符串（"18.243.0.1"）
     std::string ip() const { return ip_port().first; }
-    //! Numeric port (host byte order).
+    // 数字端口（主机字节序）
     uint16_t port() const { return ip_port().second; }
-    //! Numeric IP address as an integer (i.e., in [host byte order](\ref man3::byteorder)).
+    // 作为整数的 IPv4 地址（即 [主机字节序](引自 man3::byteorder)）。
     uint32_t ipv4_numeric() const;
-    //! Create an Address from a 32-bit raw numeric IP address
+    // 从 32 位原始数字 IP 地址创建 Address。
     static Address from_ipv4_numeric(uint32_t ip_address);
-    //! Human-readable string, e.g., "8.8.8.8:53".
+    // 人类可读的字符串，例如 "8.8.8.8:53"。
     std::string to_string() const;
-    //!@}
 
-    //! \name Low-level operations
-    //!@{
+    
+    /** name 低级操作 */
 
-    //! Size of the underlying address storage.
+    // 底层地址存储的大小
     socklen_t size() const { return _size; }
-    //! Const pointer to the underlying socket address storage.
+    // 底层套接字地址存储的常量指针
     const sockaddr* raw() const { return static_cast<const sockaddr*>(_address); }
-    //! Safely convert to underlying sockaddr type
+    // 安全地转换为底层 sockaddr 类型
     template <typename sockaddr_type>
     const sockaddr_type* as() const;
-
-    //!@}
 };
+
