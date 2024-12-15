@@ -60,7 +60,6 @@ public:
     // 人类可读的字符串，例如 "8.8.8.8:53"。
     std::string to_string() const;
 
-    
     /** name 低级操作 */
 
     // 底层地址存储的大小
@@ -71,4 +70,3 @@ public:
     template <typename sockaddr_type>
     const sockaddr_type* as() const;
 };
-

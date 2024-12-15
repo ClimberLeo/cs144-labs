@@ -27,10 +27,11 @@ NetworkInterface::NetworkInterface(string_view name, shared_ptr<OutputPort> port
 /**
  * @brief 发送 IPv4 数据报
  * @param[in] dgram: 要发送的 IPv4 数据报
- * @param[in] next_hop: 下一跳 IP 地址（通常为路由器或默认网关，但如果直接连接到与目标相同的网络，则也可能是另一台主机）
+ * @param[in] next_hop: 下一跳 IP
+ * 地址，通常为路由器或默认网关，但如果直接连接到与目标相同的网络，则也可能是另一台主机
  * @note 注意：Address 类型可以通过使用 Address::ipv4_numeric() 方法转换为 uint32_t（原始 32 位 IP 地址）。
  */
-void NetworkInterface::send_datagram(const InternetDatagram & dgram, const Address & next_hop) {
+void NetworkInterface::send_datagram(const InternetDatagram& dgram, const Address& next_hop) {
     // Your code here.
     (void)dgram;
     (void)next_hop;
