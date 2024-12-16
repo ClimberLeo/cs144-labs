@@ -8,10 +8,10 @@
 using namespace std;
 
 bool ARPMessage::supported() const {
-    return hardware_type == TYPE_ETHERNET and protocol_type == EthernetHeader::TYPE_IPv4
-           and hardware_address_size == sizeof(EthernetHeader::src)
-           and protocol_address_size == sizeof(IPv4Header::src)
-           and ((opcode == OPCODE_REQUEST) or (opcode == OPCODE_REPLY));
+    return hardware_type == TYPE_ETHERNET && protocol_type == EthernetHeader::TYPE_IPv4
+           && hardware_address_size == sizeof(EthernetHeader::src)
+           && protocol_address_size == sizeof(IPv4Header::src)
+           && ((opcode == OPCODE_REQUEST) || (opcode == OPCODE_REPLY));
 }
 
 string ARPMessage::to_string() const {

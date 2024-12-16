@@ -11,7 +11,7 @@ I would like to thank/reward these classmates for their help: [list sunetids her
 
 This checkpoint took me about [n] hours to do. I [did/did not] attend the lab session.
 
-## 实现思路
+## lab总结与具体实现思路
 
 本次要实现的是TCP的**Sender**，在上一次lab中提到过，由于TCP是在两个Peer之间建立的全连接双向通信，因此每个Peer既充当Sender又充当Receiver。
 而Sender的主要功能是负责接收应用程序以字节流的形式传过来的数据，将该字节流分割成一个个的segment（其大小由Receiver端的窗口大小决定，这也是实现流量控制的关键），加上该segment对应的头部信息（序列号，必要时还要加上SYN/FIN），通过网络发送到对端的Receiver，每次发送时只要窗口大小还够，就应尽可能的多发送字节流中的数据（按一个个段），窗口大小的计算要考虑到已经发送但还未收到确认的数据大小，因为它们后续可能要重传。

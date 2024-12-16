@@ -4,18 +4,18 @@
 #include "ipv4_header.hh"
 #include "parser.hh"
 
-// [ARP](\ref rfc::rfc826) message
+// ARP 消息（引自rfc::rfc826）
 struct ARPMessage {
-    static constexpr size_t LENGTH = 28;          // ARP message length in bytes
-    static constexpr uint16_t TYPE_ETHERNET = 1;  // ARP type for Ethernet/Wi-Fi as link-layer protocol
+    static constexpr size_t LENGTH = 28;          // ARP 消息的字节数
+    static constexpr uint16_t TYPE_ETHERNET = 1;  // 以太网/Wi-Fi作为链路层协议的ARP类型
     static constexpr uint16_t OPCODE_REQUEST = 1;
     static constexpr uint16_t OPCODE_REPLY = 2;
 
-    uint16_t hardware_type = TYPE_ETHERNET;  // Type of the link-layer protocol (generally Ethernet/Wi-Fi)
-    uint16_t protocol_type = EthernetHeader::TYPE_IPv4;  // Type of the Internet-layer protocol (generally IPv4)
+    uint16_t hardware_type = TYPE_ETHERNET;  // 链路层协议类型（通常为以太网/Wi-Fi）
+    uint16_t protocol_type = EthernetHeader::TYPE_IPv4;  // 网络层协议类型（通常为IPv4）
     uint8_t hardware_address_size = sizeof(EthernetHeader::src);
     uint8_t protocol_address_size = sizeof(IPv4Header::src);
-    uint16_t opcode{};  // Request or reply
+    uint16_t opcode{};  // 请求/回复类型
 
     EthernetAddress sender_ethernet_address{};
     uint32_t sender_ip_address{};
@@ -23,10 +23,10 @@ struct ARPMessage {
     EthernetAddress target_ethernet_address{};
     uint32_t target_ip_address{};
 
-    // Return a string containing the ARP message in human-readable format
+    // 返回一个字符串，包含ARP消息的可读格式
     std::string to_string() const;
 
-    // Is this type of ARP message supported by the parser?
+    // ARP 消息类型是否被解析器支持
     bool supported() const;
 
     void parse(Parser& parser);

@@ -6,15 +6,16 @@
 
 #include "parser.hh"
 
-// IPv4 Internet datagram header (note: IP options are not supported)
+// IPv4 互联网数据报头（注意：不支持 IP 选项）
 struct IPv4Header {
-    static constexpr size_t LENGTH = 20;         // IPv4 header length, not including options
-    static constexpr uint8_t DEFAULT_TTL = 128;  // A reasonable default TTL value
-    static constexpr uint8_t PROTO_TCP = 6;      // Protocol number for TCP
+    static constexpr size_t LENGTH = 20;         // IPV4头部长度，不包括选项
+    static constexpr uint8_t DEFAULT_TTL = 128;  // 默认的合理TTL值
+    static constexpr uint8_t PROTO_TCP = 6;      // TCP协议号
 
     static constexpr uint64_t serialized_length() { return LENGTH; }
 
     /*
+     *  IPv4 头部格式：
      *   0                   1                   2                   3
      *   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
      *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -32,8 +33,8 @@ struct IPv4Header {
      *  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
      */
 
-    // IPv4 Header fields
-    uint8_t ver = 4;            // IP version
+    // IPv4 头部字段（按照位于 IP 头部中的顺序排列）
+    uint8_t ver = 4;            // IP version 
     uint8_t hlen = LENGTH / 4;  // header length (multiples of 32 bits)
     uint8_t tos = 0;            // type of service
     uint16_t len = 0;           // total length of packet
