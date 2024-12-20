@@ -1,8 +1,8 @@
 #pragma once
 
+#include <map>
 #include <memory>
 #include <optional>
-#include <map>
 
 #include "exception.hh"
 #include "network_interface.hh"
@@ -49,7 +49,8 @@ private:
 
         RouteTrie() = default;
         // 插入一条路由
-        void insert(TrieNode* node, uint32_t pref, uint8_t plen, const std::optional<Address> &nhop, size_t inum, uint8_t pos);
+        void insert(TrieNode* node, uint32_t pref, uint8_t plen, const std::optional<Address>& nhop, size_t inum,
+                    uint8_t pos);
         // 找到对于当前 IP 地址满足最长前缀匹配的路由
         TrieNode* search(TrieNode* node, uint32_t ip_addr, uint8_t pos);
     } route_trie_{};
