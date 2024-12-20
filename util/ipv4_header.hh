@@ -34,7 +34,7 @@ struct IPv4Header {
      */
 
     // IPv4 头部字段（按照位于 IP 头部中的顺序排列）
-    uint8_t ver = 4;            // IP version 
+    uint8_t ver = 4;            // IP version
     uint8_t hlen = LENGTH / 4;  // header length (multiples of 32 bits)
     uint8_t tos = 0;            // type of service
     uint16_t len = 0;           // total length of packet

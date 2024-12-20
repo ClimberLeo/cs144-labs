@@ -11,7 +11,7 @@ struct ARPMessage {
     static constexpr uint16_t OPCODE_REQUEST = 1;
     static constexpr uint16_t OPCODE_REPLY = 2;
 
-    uint16_t hardware_type = TYPE_ETHERNET;  // 链路层协议类型（通常为以太网/Wi-Fi）
+    uint16_t hardware_type = TYPE_ETHERNET;              // 链路层协议类型（通常为以太网/Wi-Fi）
     uint16_t protocol_type = EthernetHeader::TYPE_IPv4;  // 网络层协议类型（通常为IPv4）
     uint8_t hardware_address_size = sizeof(EthernetHeader::src);
     uint8_t protocol_address_size = sizeof(IPv4Header::src);

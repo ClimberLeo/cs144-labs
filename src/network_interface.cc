@@ -25,15 +25,15 @@ NetworkInterface::NetworkInterface(string_view name, shared_ptr<OutputPort> port
 }
 
 /**
- * @brief 此方法会在调用者（TCP连接或路由器）想要发送出站（outbound）IP 数据报到下一跳 IP 地址时调用，网络接口在这里负责将 IP 数据包转换为以太网帧，并将其发送
+ * @brief 此方法会在调用者（TCP连接或路由器）想要发送出站（outbound）IP 数据报到下一跳 IP
+ * 地址时调用，网络接口在这里负责将 IP 数据包转换为以太网帧，并将其发送
  * @param[in] dgram: 要发送的 IPv4 数据报
  * @param[in] next_hop: 下一跳 IP
  * 地址，通常为路由器或默认网关，但如果直接连接到与目标相同的网络，则也可能是另一台主机
  * @note 注意：Address 类型可以通过使用 Address::ipv4_numeric() 方法转换为 uint32_t（原始 32 位 IP 地址）。
  */
 void NetworkInterface::send_datagram(const InternetDatagram& dgram, const Address& next_hop) {
-    if (auto it = arp_cache_.find(next_hop.ipv4_numeric());
-        it != arp_cache_.end()) {  // 已缓存目标 MAC 地址
+    if (auto it = arp_cache_.find(next_hop.ipv4_numeric()); it != arp_cache_.end()) {  // 已缓存目标 MAC 地址
         if (it->second.second + 30000 < time_stamp_ms_) {
             // 缓存时间超过30秒，移除该arp项并重新发送arp请求（这里相当于惰性删除）
             arp_cache_.erase(it);
@@ -67,14 +67,14 @@ void NetworkInterface::send_datagram(const InternetDatagram& dgram, const Addres
     eth_frame.header.dst = ETHERNET_BROADCAST;  // 广播到所有主机
     eth_frame.header.type = EthernetHeader::TYPE_ARP;
     eth_frame.payload = move(serialize<ARPMessage>(arp_request));
-    transmit(eth_frame);
-    // 缓存未发送的数据报
+    // 先缓存未发送的数据报
     if (it == unsent_dgrams_.end()) {
         unsent_dgrams_[next_hop.ipv4_numeric()] = {{dgram}, time_stamp_ms_};
     } else {
         it->second.first.push_back(dgram);  // 不要担心重复发送相同数据报，TCP会帮你处理一切
         it->second.second = time_stamp_ms_;
     }
+    transmit(eth_frame);
 }
 
 /**
@@ -105,8 +105,7 @@ void NetworkInterface::recv_frame(const EthernetFrame& frame) {
     // 缓存 ARP 映射记录（无论当前收到的是请求还是响应）
     arp_cache_[arp_msg.sender_ip_address] = {arp_msg.sender_ethernet_address, time_stamp_ms_};
     // 如果是 ARP 请求且请求的目的 IP 地址是本机，则返回 ARP 响应
-    if (arp_msg.opcode == ARPMessage::OPCODE_REQUEST &&
-        arp_msg.target_ip_address == ip_address_.ipv4_numeric()) {
+    if (arp_msg.opcode == ARPMessage::OPCODE_REQUEST && arp_msg.target_ip_address == ip_address_.ipv4_numeric()) {
         ARPMessage arp_reply;
         arp_reply.opcode = ARPMessage::OPCODE_REPLY;
         arp_reply.sender_ip_address = ip_address_.ipv4_numeric();
@@ -121,8 +120,7 @@ void NetworkInterface::recv_frame(const EthernetFrame& frame) {
         transmit(eth_frame);
     }
     // 发送当前缓存项对应的所有未发送的 IP 数据报
-    if (auto it = unsent_dgrams_.find(arp_msg.sender_ip_address);
-        it != unsent_dgrams_.end()) {
+    if (auto it = unsent_dgrams_.find(arp_msg.sender_ip_address); it != unsent_dgrams_.end()) {
         EthernetFrame eth_frame;
         for (const auto& dgram : it->second.first) {
             eth_frame.header.src = ethernet_address_;
@@ -141,5 +139,6 @@ void NetworkInterface::recv_frame(const EthernetFrame& frame) {
  */
 void NetworkInterface::tick(const size_t ms_since_last_tick) {
     time_stamp_ms_ += ms_since_last_tick;
-    //! 注：移除所有过期arp缓存项的逻辑被放到了 send_datagram() 中以惰性删除的方式实现，这样可以提高管理arp缓存项的效率（不用每次都遍历整个缓存检查）
+    //! 注：移除所有过期arp缓存项的逻辑被放到了 send_datagram()
+    //! 中以惰性删除的方式实现，这样可以提高管理arp缓存项的效率（不用每次都遍历整个缓存检查）
 }

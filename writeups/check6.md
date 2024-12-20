@@ -1,0 +1,40 @@
+Checkpoint 6 Writeup
+====================
+
+My name: [your name here]
+
+My SUNet ID: [your sunetid here]
+
+I collaborated with: [list sunetids here]
+
+I would like to thank/reward these classmates for their help: [list sunetids here]
+
+This checkpoint took me about [8] hours to do. I [did/did not] attend the lab session.
+
+## lab总结与具体实现思路
+
+本次 lab 实现了一个简易路由器，主要功能是动态添加路由规则和对所有收到的包执行最长前缀匹配，进而转发到对应的路由规则上，实现的功能并不多，也并未实现动态构建路由表的相关协议（BGP、OSPF等）。
+在具体实现上，一个简单的思路是对于每个数据报，遍历所有的路由规则，逐一匹配，从而找出满足最长前缀匹配的路由规则，这在小型网络（路由记录在 10~100 条左右时）中是可接受的，但在一些中大型网络或互联网核心路由器（路由规则可能达到十万级到百万级）中就显得较为低效。考虑到最长前缀匹配下的所有可能被匹配到的 IP 路由前缀必定小于待转发数据包的目标 IP 地址，因此想到使用了红黑树来按照 IP 前缀降序维护路由规则，对于每个待转发数据报的 IP 地址，找出第一个前缀小于等于它的路由规则，向后（降序）遍历匹配，第一个匹配成功的路由规则就是最长前缀的 IP 规则，这样在较好情况下的时间复杂度可以降到 O(logN) 左右。
+但这种策略在最坏情况下仍然可能会遍历所有路由规则，因而最坏时间复杂度仍为 O(N)。最后结合 IP 前缀的特点，想到了可以使用前缀树（Trie）作为路由表，按前缀的每一位位维护所有 IP 路由规则，查找时直接顺着待查找 IP 地址的每一位向下查找，搜索到的最深的路由规则即为最长前缀匹配的路由规则。此种策略的最坏时间复杂度不会超过 O(M)，其中 M 为待转发数据包的 IP 地址长度（32）。可以以比较高效的方式实现最长前缀匹配和路由转发，因此最终选择了此种实现策略。
+
+Program Structure and Design of the Router [Describe data
+structures and approach taken. Describe alternative designs considered
+or tested.  Describe benefits and weaknesses of your design compared
+with alternatives -- perhaps in terms of simplicity/complexity, risk
+of bugs, asymptotic performance, empirical performance, required
+implementation time and difficulty, and other factors. Include any
+measurements if applicable.]: []
+
+Implementation Challenges:
+[]
+
+Remaining Bugs:
+[]
+
+- Optional: I had unexpected difficulty with: [describe]
+
+- Optional: I think you could make this lab better by: [describe]
+
+- Optional: I was surprised by: [describe]
+
+- Optional: I'm not sure about: [describe]

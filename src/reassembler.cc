@@ -45,7 +45,7 @@ inline void Reassembler::add_pending_slice(std::string& data, uint64_t idx, bool
     }
     // 此时不存在可以覆盖当前待加入切片的缓冲区切片，移除缓冲区中所有被当前切片覆盖的切片
     while (it != buffer_.end() && it->first < r) {
-        auto& [b_idx, b_data] = *it;
+        const auto& [b_idx, b_data] = *it;
         if (b_idx + b_data.first.size() > r) {  // 截断与后续切片重叠的部分
             data.resize(data.size() - (r - b_idx));
             is_last_substring = false;  // 切片被截断，取消末尾切片标记

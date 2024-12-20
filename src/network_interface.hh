@@ -8,7 +8,8 @@
 #include "ipv4_datagram.hh"
 
 /**
- * 网络接口连接了 IP（互联网层）与以太网（网络接入层），是 TCP/IP 网络堆栈的最底层（连接 IP 与下层网络协议，如以太网）模块
+ * 网络接口连接了 IP（互联网层）与以太网（网络接入层），是 TCP/IP 网络堆栈的最底层（连接 IP
+ * 与下层网络协议，如以太网）模块
  * 此模块也被重复使用，作为路由器的一部分：路由器通常有多个网络接口，其工作是在不同的接口之间路由互联网数据报
  * 网络接口将数据报文（来自“客户”，如 TCP/IP 堆栈或路由器）转换为以太网帧
  * 为了填充以太网目标地址，它查找每个数据报文的下一个 IP 跳的以太网地址，并使用`地址解析协议`(ARP)进行请求
@@ -26,7 +27,7 @@ public:
 
     // 用给定的以太网（网络接入层）和IP（互联网层）地址构造网络接口
     NetworkInterface(std::string_view name, std::shared_ptr<OutputPort> port,
-        const EthernetAddress& ethernet_address, const Address& ip_address);
+                     const EthernetAddress& ethernet_address, const Address& ip_address);
 
     // 发送一个封装在以太网帧中的互联网数据报文（如果它知道以太网目标地址）。
     // 将需要使用 ARP（地址解析协议）查找下一跳的以太网目标地址。
